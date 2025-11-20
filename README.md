@@ -67,12 +67,8 @@ You can control the arm joints using the **Side Panel Sliders** (Params) or the 
 | Joint | Increase | Decrease |
 |-------|----------|----------|
 | **Waist** | J | L |
-| **Shoulder** | 3 | 4 |
-| **Elbow** | 5 | 6 |
-| **Forearm Roll** | 7 | 8 |
-| **Wrist Pitch** | 9 | 0 |
 | **Wrist Roll** | O | U |
-| **Gripper** | [ | ] |
+| **Gripper** | M | , |
 
 *Note: The Side Panel Sliders allow for direct control of each joint. If you use the keyboard or IK mode, the sliders will not update to match the robot's position due to PyBullet limitations.*
 
