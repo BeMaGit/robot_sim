@@ -20,8 +20,10 @@ A PyBullet-based simulation of an RC Rover equipped with a 6-DOF robot arm. This
 2.  Install the required dependencies:
 
     ```bash
-    pip install pybullet
+    pip install -r requirements.txt
     ```
+
+![Robot Simulation](img/simulation_screenshot.png)
 
 ## Usage
 
@@ -60,15 +62,19 @@ Click on the PyBullet window to ensure it has focus before using the keyboard co
 ### Arm Control (Joint Mode)
 Toggle Mode: **T**
 
+You can control the arm joints using the **Side Panel Sliders** (Params) or the keyboard.
+
 | Joint | Increase | Decrease |
 |-------|----------|----------|
-| **Waist** | 1 | 2 |
+| **Waist** | J | L |
 | **Shoulder** | 3 | 4 |
 | **Elbow** | 5 | 6 |
 | **Forearm Roll** | 7 | 8 |
 | **Wrist Pitch** | 9 | 0 |
-| **Wrist Roll** | - | = |
+| **Wrist Roll** | O | U |
 | **Gripper** | [ | ] |
+
+*Note: The Side Panel Sliders allow for direct control of each joint. If you use the keyboard or IK mode, the sliders will not update to match the robot's position due to PyBullet limitations.*
 
 ### Arm Control (IK Mode)
 Toggle Mode: **T**

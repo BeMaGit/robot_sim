@@ -5,12 +5,11 @@ class RobotController:
         self.turn_speed = 10.0
         
         # Arm state (joint angles in radians)
-        self.arm_joints = [0.0] * 7
+        self.arm_joints = [0.0] * 6
         self.joint_limits = [
             (-3.14, 3.14), # Waist
             (-2.0, 2.0),   # Shoulder
             (-2.5, 2.5),   # Elbow
-            (-3.14, 3.14), # Forearm Roll
             (-1.57, 1.57), # Wrist Pitch
             (-3.14, 3.14), # Wrist Roll
             (0.0, 0.02)    # Gripper
@@ -43,16 +42,25 @@ class RobotController:
     def get_arm_targets(self):
         return self.arm_joints
 
-    def solve_ik(self, robot_id, end_effector_index, target_pos, target_orn, pybullet_module):
+    def solve_ik(self, robot_id, end_effector_index, target_pos, target_orn=None, pybullet_module=None):
         """
         Calculate joint angles for the given target position and orientation.
         """
-        joint_poses = pybullet_module.calculateInverseKinematics(
-            robot_id,
-            end_effector_index,
-            target_pos,
-            target_orn,
-            maxNumIterations=100,
-            residualThreshold=1e-5
-        )
+        if target_orn is not None:
+            joint_poses = pybullet_module.calculateInverseKinematics(
+                robot_id,
+                end_effector_index,
+                target_pos,
+                targetOrientation=target_orn,
+                maxNumIterations=100,
+                residualThreshold=1e-5
+            )
+        else:
+            joint_poses = pybullet_module.calculateInverseKinematics(
+                robot_id,
+                end_effector_index,
+                target_pos,
+                maxNumIterations=100,
+                residualThreshold=1e-5
+            )
         return joint_poses

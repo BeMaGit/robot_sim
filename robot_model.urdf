@@ -221,35 +221,7 @@
     <limit lower="-2.5" upper="2.5" effort="10" velocity="1"/>
   </joint>
 
-  <!-- Joint 4: Forearm Roll (Roll) -->
-  <link name="forearm_roll_link">
-    <visual>
-      <geometry>
-        <cylinder length="0.04" radius="0.015"/>
-      </geometry>
-      <origin xyz="0 0 0.02" rpy="0 0 0"/>
-      <material name="white"/>
-    </visual>
-    <collision>
-      <geometry>
-        <cylinder length="0.04" radius="0.015"/>
-      </geometry>
-      <origin xyz="0 0 0.02" rpy="0 0 0"/>
-    </collision>
-    <inertial>
-      <mass value="0.05"/>
-      <inertia ixx="0.00005" ixy="0" ixz="0" iyy="0.00005" iyz="0" izz="0.00005"/>
-    </inertial>
-  </link>
-  <joint name="forearm_roll_joint" type="revolute">
-    <parent link="elbow_link"/>
-    <child link="forearm_roll_link"/>
-    <origin xyz="0 0 0.08" rpy="0 0 0"/>
-    <axis xyz="0 0 1"/>
-    <limit lower="-3.14" upper="3.14" effort="5" velocity="2"/>
-  </joint>
-
-  <!-- Joint 5: Wrist Pitch (Pitch) -->
+  <!-- Joint 4: Wrist Pitch (Pitch) -->
   <link name="wrist_pitch_link">
     <visual>
       <geometry>
@@ -270,14 +242,14 @@
     </inertial>
   </link>
   <joint name="wrist_pitch_joint" type="revolute">
-    <parent link="forearm_roll_link"/>
+    <parent link="elbow_link"/>
     <child link="wrist_pitch_link"/>
-    <origin xyz="0 0 0.04" rpy="0 0 0"/>
+    <origin xyz="0 0 0.08" rpy="0 0 0"/>
     <axis xyz="0 1 0"/>
     <limit lower="-1.57" upper="1.57" effort="5" velocity="2"/>
   </joint>
 
-  <!-- Joint 6: Wrist Roll (Roll) -->
+  <!-- Joint 5: Wrist Roll (Roll) -->
   <link name="wrist_roll_link">
     <visual>
       <geometry>
@@ -305,7 +277,7 @@
     <limit lower="-3.14" upper="3.14" effort="2" velocity="5"/>
   </joint>
 
-  <!-- Joint 7: Gripper -->
+  <!-- Joint 6: Gripper -->
   <link name="gripper_link">
     <visual>
       <geometry>
