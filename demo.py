@@ -26,7 +26,7 @@ def main():
     
     # Joint Indices (based on URDF order)
     wheel_indices = [0, 1, 2, 3] # FL, FR, RL, RR
-    arm_indices = [4, 5, 6, 7, 8, 9, 10]
+    arm_indices = [4, 5, 6, 7, 8, 9]
 
     print("Demo started.")
     print("Press Ctrl+C to exit.")
@@ -111,7 +111,7 @@ def main():
                 # Reset to 0 if no func? Or keep last? 
                 # For simplicity in this demo, let's default to 0s if not specified, or keep controller state
                 # Let's just use 0s for "rest"
-                current_arm_targets = [0.0] * 7
+                current_arm_targets = [0.0] * 6
 
             # Apply Arm Targets
             for i, target in enumerate(current_arm_targets):

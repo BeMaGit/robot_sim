@@ -2,6 +2,8 @@
 
 A PyBullet-based simulation of an RC Rover equipped with a 6-DOF robot arm. This project simulates a differential drive mobile base and a manipulator arm, controllable via keyboard inputs.
 
+The hardware is based on the [RC Rover with Robot Arm 6DOF](https://makerworld.com/en/models/1342319-rc-rover-with-robot-arm-6-dof#profileId-1383072) from [MakerWorld](https://makerworld.com/) by [Emre Kalem](https://makerworld.com/en/@emrekalem).
+
 ## Features
 
 - **Mobile Base**: Differential drive simulation with 4 wheels (2 driven, 2 passive).
@@ -17,35 +19,63 @@ A PyBullet-based simulation of an RC Rover equipped with a 6-DOF robot arm. This
 ## Installation
 
 1.  Clone the repository (if applicable) or download the source code.
-2.  Install the required dependencies:
+2.  Create and activate a virtual environment:
 
     ```bash
-    pip install -r requirements.txt
+    python3 -m venv venv
+    source venv/bin/activate  # On Windows use: venv\Scripts\activate
     ```
 
-![Robot Simulation](img/simulation_screenshot.png)
+3.  Install the required dependencies:
+
+    ```bash
+    venv/bin/pip install -r requirements.txt
+    ```
+
+![Robot Simulation](img/robot_sim_v00.png)
 
 ## Usage
 
 To start the simulation, run the `simulation.py` script:
 
 ```bash
-python simulation.py
+venv/bin/python simulation.py
 ```
 
 To run the automated demo script:
 
 ```bash
-python demo.py
+venv/bin/python demo.py
 ```
 
 To run the robot control script (for Raspberry Pi):
 
 ```bash
-python robot_control.py
+venv/bin/python robot_control.py
 ```
 
 *Note: `robot_control.py` contains placeholder functions for hardware interfaces. You will need to adapt `read_rc_input` and `set_servo_angle` to match your specific motor driver and RC receiver libraries.*
+
+## Hardware Control Schema
+
+The robot control logic is split between the Raspberry Pi (High-level logic, IK) and an Arduino (Low-level servo driver).
+
+![Control Schema](img/robot_control_schema.svg)
+
+### Setup Instructions
+
+1.  **Arduino**:
+    *   Open `arduino_driver/arduino_driver.ino` in the Arduino IDE.
+    *   Connect your Arduino and upload the sketch.
+    *   Note the serial port (e.g., `/dev/ttyUSB0` or `/dev/ttyACM0`).
+
+2.  **Raspberry Pi**:
+    *   Ensure the Arduino is connected via USB.
+    *   Run the control script:
+        ```bash
+        python robot_control.py
+        ```
+    *   The script will attempt to connect to `/dev/ttyUSB0` by default. You can modify the port in `robot_control.py` if needed.
 
 A PyBullet GUI window will open showing the robot on a ground plane.
 
@@ -54,32 +84,19 @@ A PyBullet GUI window will open showing the robot on a ground plane.
 Click on the PyBullet window to ensure it has focus before using the keyboard controls.
 
 ### Rover Movement
+
 - **Arrow Up**: Move Forward
 - **Arrow Down**: Move Backward
 - **Arrow Left**: Turn Left
 - **Arrow Right**: Turn Right
 
-### Arm Control (Joint Mode)
-Toggle Mode: **T**
+### Arm Movement
 
-You can control the arm joints using the **Side Panel Sliders** (Params) or the keyboard.
-
-| Joint | Increase | Decrease |
-|-------|----------|----------|
-| **Waist** | J | L |
-| **Wrist Roll** | O | U |
-| **Gripper** | M | , |
-
-*Note: The Side Panel Sliders allow for direct control of each joint. If you use the keyboard or IK mode, the sliders will not update to match the robot's position due to PyBullet limitations.*
-
-### Arm Control (IK Mode)
-Toggle Mode: **T**
-
--   **I / K**: Move Forward / Backward (X-axis)
--   **J / L**: Move Left / Right (Y-axis)
--   **U / O**: Move Up / Down (Z-axis)
--   **N / M**: Rotate Yaw
--   **Space**: Toggle Gripper
+- **I / K**: Arm Forward / Backward (X-axis)
+- **Z / H**: Arm Up / Down (Z-axis)
+- **J / L**: Rotate Arm
+- **U / O**: Rotate Gripper
+- **N / M***: Gripper Open / Close
 
 ## File Structure
 
@@ -94,6 +111,6 @@ Toggle Mode: **T**
 To run the tests:
 
 ```bash
-python -m unittest test_controller.py
-python -m unittest test_simulation.py
+venv/bin/python -m unittest test_controller.py
+venv/bin/python -m unittest test_simulation.py
 ```

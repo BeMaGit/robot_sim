@@ -3,14 +3,50 @@ import pybullet_data
 import time
 import math
 
-# --- Hardware Interface Placeholders ---
-# You will need to replace these with your actual hardware libraries
-# e.g., adafruit_servokit, RPi.GPIO, etc.
+import serial
+
+# --- Hardware Interface ---
+
+class ArduinoInterface:
+    def __init__(self, port='/dev/ttyUSB0', baudrate=115200):
+        self.ser = None
+        try:
+            self.ser = serial.Serial(port, baudrate, timeout=1)
+            time.sleep(2) # Wait for Arduino reset
+            print(f"Connected to Arduino on {port}")
+        except Exception as e:
+            print(f"Error connecting to Arduino: {e}")
+            print("Running in MOCK mode (no hardware output)")
+
+    def send_command(self, angles):
+        """
+        Send angles to Arduino.
+        angles: list or tuple of 7 floats (degrees)
+        """
+        if self.ser and self.ser.is_open:
+            # Format: CMD:ang0,ang1,ang2,ang3,ang4,ang5,ang6\n
+            cmd_str = "CMD:" + ",".join([f"{a:.2f}" for a in angles]) + "\n"
+            try:
+                self.ser.write(cmd_str.encode('utf-8'))
+            except Exception as e:
+                print(f"Serial write error: {e}")
+        else:
+            # Mock output
+            # print(f"MOCK SEND: {angles}")
+            pass
+
+    def close(self):
+        if self.ser and self.ser.is_open:
+            self.ser.close()
+
+# Global interface instance
+arduino = None
 
 def setup_hardware():
     """Initialize motor drivers and RC receiver."""
-    print("Hardware setup: Mocking motors and RC receiver.")
-    pass
+    global arduino
+    # Try to connect to Arduino. Adjust port as needed (e.g., /dev/ttyACM0)
+    arduino = ArduinoInterface(port='/dev/ttyUSB0')
 
 def read_rc_input():
     """
@@ -36,17 +72,33 @@ def read_rc_input():
         'ch5': 0.0  # Gripper
     }
 
-def set_servo_angle(joint_index, angle_radians):
+def send_all_servos(arm_angles, gripper_val):
     """
-    Command a specific servo to move to an angle.
-    joint_index: The index of the joint (0-6)
-    angle_radians: The target angle in radians
+    Send all servo angles to Arduino in one go.
+    arm_angles: list of angles for joints 4-9 (6 items) in RADIANS
+    gripper_val: 0.0 to 0.02 (approx)
     """
-    # MOCK: Print the output
-    # Convert radians to degrees or PWM pulse width as needed by your hardware
-    angle_deg = math.degrees(angle_radians)
-    # print(f"Servo {joint_index}: {angle_deg:.2f} deg")
-    pass
+    if arduino:
+        # Convert radians to degrees for Arduino
+        # URDF Joints: Waist, Shoulder, Elbow, WristP, WristR
+        # Note: Check your URDF zero positions vs Servo zero positions!
+        # For now, assuming 1:1 mapping with some offset (e.g. 90 deg center)
+        
+        # Map -PI..PI to 0..180 (approx, needs tuning)
+        # Let's assume 0 radians = 90 degrees
+        
+        degrees = []
+        for rad in arm_angles:
+            deg = math.degrees(rad) + 90.0
+            degrees.append(deg)
+            
+        # Gripper: 0.0(Open) -> 0.02(Closed). Map to servo 0..180?
+        # Let's say 0.0 -> 0 deg, 0.02 -> 180 deg (just an example)
+        # Or maybe 0.0 -> 90, 0.02 -> 110
+        grip_deg = 90.0 + (gripper_val / 0.02) * 90.0 
+        degrees.append(grip_deg)
+        
+        arduino.send_command(degrees)
 
 # --- Robot Control Logic ---
 
@@ -139,30 +191,18 @@ def main():
             # We need to map these back to our motor indices.
             
             # 6. Send to Servos
-            # The arm joints start from index 4 in our URDF (0-3 are wheels)
-            # PyBullet IK returns angles for joints 0..N
-            # Wait, calculateInverseKinematics returns positions for *all* joints?
-            # Or just the chain? It typically returns for all movable joints.
+            # Collect angles for the arm joints
+            # Arm Joints (Waist, Shoulder, Elbow, WristP, WristR, Gripper)
+            current_arm_angles = []
+            arm_joint_indices = [4, 5, 6, 7, 8, 9] # Exclude gripper for this list
             
-            # Let's iterate and set.
-            # Our Arm Joints in URDF are indices 4, 5, 6, 7, 8, 9, 10
-            # The `joint_poses` tuple usually matches the order of movable joints.
+            for joint_idx in arm_joint_indices:
+                # joint_poses includes wheels (0-3), so index 4 is at joint_poses[4]
+                angle = joint_poses[joint_idx]
+                current_arm_angles.append(angle)
             
-            # Assuming wheels are continuous/revolute, they are movable.
-            # So joint_poses[0..3] are wheels, joint_poses[4..10] are arm.
-            
-            # Arm Joints (Waist, Shoulder, Elbow, Forearm, WristP, WristR, Gripper)
-            arm_joint_indices = [4, 5, 6, 7, 8, 9, 10]
-            
-            for i, joint_idx in enumerate(arm_joint_indices):
-                # joint_poses includes wheels, so index matches directly if wheels are first
-                angle = joint_poses[joint_idx] 
-                set_servo_angle(joint_idx, angle)
-                
-            # Also handle Gripper separately if it's not fully solved by IK or if we want manual override
-            # IK might solve for gripper position, but usually we control gripper DOF manually
-            # Let's override the gripper joint (last one) with our manual state
-            set_servo_angle(10, gripper_state)
+            # Send batch command
+            send_all_servos(current_arm_angles, gripper_state)
 
             # Debug Print (Optional)
             # print(f"Target: {target_pos}, Joints: {[f'{j:.2f}' for j in joint_poses[4:]]}")
