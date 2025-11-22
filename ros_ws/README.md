@@ -46,6 +46,8 @@ The launch file starts Rviz automatically with a pre-configured view.
 
 To visualize the robot model, simply run the launch command mentioned above. RViz will open and display the robot model.
 
+![ROS 2 Visualization](../img/ros_v00.png)
+
 ## Interaction
 
 The robot exposes the following topics for control:
