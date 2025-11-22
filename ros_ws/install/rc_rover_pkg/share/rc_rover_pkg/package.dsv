@@ -1,0 +1,6 @@
+source;share/rc_rover_pkg/hook/pythonpath.dsv
+source;share/rc_rover_pkg/hook/pythonpath.sh
+source;share/rc_rover_pkg/hook/ament_prefix_path.dsv
+source;share/rc_rover_pkg/hook/ament_prefix_path.sh
+source;../../build/rc_rover_pkg/share/rc_rover_pkg/hook/pythonpath_develop.dsv
+source;../../build/rc_rover_pkg/share/rc_rover_pkg/hook/pythonpath_develop.sh

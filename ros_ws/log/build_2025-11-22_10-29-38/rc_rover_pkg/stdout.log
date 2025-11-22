@@ -1,0 +1,26 @@
+running develop
+running egg_info
+creating rc_rover_pkg.egg-info
+writing rc_rover_pkg.egg-info/PKG-INFO
+writing dependency_links to rc_rover_pkg.egg-info/dependency_links.txt
+writing entry points to rc_rover_pkg.egg-info/entry_points.txt
+writing requirements to rc_rover_pkg.egg-info/requires.txt
+writing top-level names to rc_rover_pkg.egg-info/top_level.txt
+writing manifest file 'rc_rover_pkg.egg-info/SOURCES.txt'
+reading manifest file 'rc_rover_pkg.egg-info/SOURCES.txt'
+writing manifest file 'rc_rover_pkg.egg-info/SOURCES.txt'
+running build_ext
+Creating /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/lib/python3.12/site-packages/rc-rover-pkg.egg-link (link to .)
+Installing hardware_interface script to /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/lib/rc_rover_pkg
+
+Installed /home/user/Documents/robot_sim/ros_ws/build/rc_rover_pkg
+running symlink_data
+creating /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/share/ament_index
+creating /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/share/ament_index/resource_index
+creating /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/share/ament_index/resource_index/packages
+symbolically linking /home/user/Documents/robot_sim/ros_ws/build/rc_rover_pkg/resource/rc_rover_pkg -> /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/share/ament_index/resource_index/packages
+symbolically linking /home/user/Documents/robot_sim/ros_ws/build/rc_rover_pkg/package.xml -> /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/share/rc_rover_pkg
+creating /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/share/rc_rover_pkg/launch
+symbolically linking /home/user/Documents/robot_sim/ros_ws/build/rc_rover_pkg/launch/bringup.launch.py -> /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/share/rc_rover_pkg/launch
+creating /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/share/rc_rover_pkg/urdf
+symbolically linking /home/user/Documents/robot_sim/ros_ws/build/rc_rover_pkg/urdf/robot_model.urdf -> /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/share/rc_rover_pkg/urdf

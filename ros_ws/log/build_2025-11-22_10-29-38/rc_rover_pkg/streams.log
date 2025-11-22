@@ -1,0 +1,28 @@
+[0.459s] Invoking command in '/home/user/Documents/robot_sim/ros_ws/build/rc_rover_pkg': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/user/Documents/robot_sim/ros_ws/build/rc_rover_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/user/Documents/robot_sim/ros_ws/build/rc_rover_pkg/build --no-deps symlink_data
+[0.621s] running develop
+[0.679s] running egg_info
+[0.679s] creating rc_rover_pkg.egg-info
+[0.684s] writing rc_rover_pkg.egg-info/PKG-INFO
+[0.684s] writing dependency_links to rc_rover_pkg.egg-info/dependency_links.txt
+[0.684s] writing entry points to rc_rover_pkg.egg-info/entry_points.txt
+[0.684s] writing requirements to rc_rover_pkg.egg-info/requires.txt
+[0.684s] writing top-level names to rc_rover_pkg.egg-info/top_level.txt
+[0.684s] writing manifest file 'rc_rover_pkg.egg-info/SOURCES.txt'
+[0.695s] reading manifest file 'rc_rover_pkg.egg-info/SOURCES.txt'
+[0.695s] writing manifest file 'rc_rover_pkg.egg-info/SOURCES.txt'
+[0.701s] running build_ext
+[0.701s] Creating /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/lib/python3.12/site-packages/rc-rover-pkg.egg-link (link to .)
+[0.701s] Installing hardware_interface script to /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/lib/rc_rover_pkg
+[0.702s] 
+[0.702s] Installed /home/user/Documents/robot_sim/ros_ws/build/rc_rover_pkg
+[0.702s] running symlink_data
+[0.702s] creating /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/share/ament_index
+[0.702s] creating /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/share/ament_index/resource_index
+[0.702s] creating /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/share/ament_index/resource_index/packages
+[0.702s] symbolically linking /home/user/Documents/robot_sim/ros_ws/build/rc_rover_pkg/resource/rc_rover_pkg -> /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/share/ament_index/resource_index/packages
+[0.702s] symbolically linking /home/user/Documents/robot_sim/ros_ws/build/rc_rover_pkg/package.xml -> /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/share/rc_rover_pkg
+[0.702s] creating /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/share/rc_rover_pkg/launch
+[0.702s] symbolically linking /home/user/Documents/robot_sim/ros_ws/build/rc_rover_pkg/launch/bringup.launch.py -> /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/share/rc_rover_pkg/launch
+[0.702s] creating /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/share/rc_rover_pkg/urdf
+[0.702s] symbolically linking /home/user/Documents/robot_sim/ros_ws/build/rc_rover_pkg/urdf/robot_model.urdf -> /home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/share/rc_rover_pkg/urdf
+[0.749s] Invoked command in '/home/user/Documents/robot_sim/ros_ws/build/rc_rover_pkg' returned '0': DEBUGINFOD_URLS=https://debuginfod.ubuntu.com PYTHONPATH=/home/user/Documents/robot_sim/ros_ws/build/rc_rover_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/user/Documents/robot_sim/ros_ws/install/rc_rover_pkg/lib/python3.12/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated -W ignore:easy_install command is deprecated setup.py develop --editable --build-directory /home/user/Documents/robot_sim/ros_ws/build/rc_rover_pkg/build --no-deps symlink_data
