@@ -83,9 +83,35 @@ To drive the robot using your keyboard:
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
-### Moving the Arm
-To move the arm to a specific pose (e.g., shoulder up):
+### Mock Mode Examples
 
+Since you are likely running in Mock Mode (no hardware), here are some specific examples to try:
+
+**1. Drive in a Circle:**
+Open a new terminal and run:
 ```bash
-ros2 topic pub --once /joint_commands sensor_msgs/msg/JointState "{name: ['shoulder_joint'], position: [-0.5]}"
+ros2 topic pub --once /cmd_vel geometry_msgs/msg/Twist "{linear: {x: 0.2}, angular: {z: 0.5}}"
+```
+You should see the robot's wheels spinning and the base moving in a circle in RViz.
+
+**2. Wave the Arm:**
+Move the shoulder and elbow to a "wave" position:
+```bash
+ros2 topic pub --once /joint_commands sensor_msgs/msg/JointState "{name: ['shoulder_joint', 'elbow_joint'], position: [-0.5, 1.0]}"
+```
+
+**3. Open/Close Gripper:**
+Open:
+```bash
+ros2 topic pub --once /joint_commands sensor_msgs/msg/JointState "{name: ['gripper_joint'], position: [0.02]}"
+```
+Close:
+```bash
+ros2 topic pub --once /joint_commands sensor_msgs/msg/JointState "{name: ['gripper_joint'], position: [0.0]}"
+```
+
+**4. Reset Arm:**
+Return all joints to zero:
+```bash
+ros2 topic pub --once /joint_commands sensor_msgs/msg/JointState "{name: ['waist_joint', 'shoulder_joint', 'elbow_joint', 'wrist_pitch_joint', 'wrist_roll_joint', 'gripper_joint'], position: [0.0, 0.0, 0.0, 0.0, 0.0, 0.0]}"
 ```
