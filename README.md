@@ -7,6 +7,8 @@ This project contains two distinct implementations for simulating and controllin
 ### 1. ROS 2 Workspace (`ros_ws/`)
 A full ROS 2 (Robot Operating System) implementation. This is the recommended approach for robust robot control, visualization, and hardware interfacing.
 
+![ROS 2 Visualization](img/ros_v00.png)
+
 -   **Features**:
     -   URDF model with visual and collision geometry.
     -   `robot_state_publisher` for TF broadcasting.
@@ -18,6 +20,8 @@ A full ROS 2 (Robot Operating System) implementation. This is the recommended ap
 
 ### 2. Python Simulation (`robsim/`)
 A standalone Python simulation using PyBullet. This is useful for testing kinematics, physics, and control logic without the overhead of ROS.
+
+![Robot Simulation](../img/robot_sim_v00.png)
 
 -   **Features**:
     -   PyBullet physics engine.
