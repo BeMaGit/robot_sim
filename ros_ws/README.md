@@ -48,13 +48,44 @@ To visualize the robot model, simply run the launch command mentioned above. RVi
 
 ![ROS 2 Visualization](../img/ros_v00.png)
 
+## Hardware Interface
+
+The `hardware_interface` node handles communication with the robot's hardware.
+
+-   **Arduino Firmware**: Located in `src/rc_rover_pkg/arduino/ros_arduino_driver/ros_arduino_driver.ino`. Upload this to your Arduino to enable hardware control.
+-   **Serial Protocol**: The node sends commands in the format `CMD:s1,s2,s3,s4,s5,s6,m1,m2,m3,m4\n` (Servos 0-180, Motors -100 to 100).
+
+### Simulation (Mock) Mode
+
+If the Arduino is not connected or the serial port is invalid, the node automatically switches to **Mock Mode**.
+-   In Mock Mode, the node simulates the robot's movement based on the commands received.
+-   This allows you to test the entire ROS stack (Navigation, MoveIt, etc.) and visualization without physical hardware.
+
 ## Interaction
 
 The robot exposes the following topics for control:
 
--   **`/cmd_vel`** (`geometry_msgs/msg/Twist`): Controls the base movement (linear/angular velocity).
--   **`/joint_commands`** (`sensor_msgs/msg/JointState`): Controls the arm joints. Publish a message with `name` and `position` arrays to move the arm.
+-   **`/cmd_vel`** (`geometry_msgs/msg/Twist`): Controls the base movement (Differential Drive).
+    -   Linear X: Forward/Backward
+    -   Angular Z: Left/Right
+-   **`/joint_commands`** (`sensor_msgs/msg/JointState`): Controls the arm joints. Publish a message with `name` and `position` arrays.
 
 The robot publishes its state to:
 
 -   **`/joint_states`** (`sensor_msgs/msg/JointState`): Current joint positions (feedback from hardware or mock simulation).
+
+## Testing
+
+### Driving the Base
+To drive the robot using your keyboard:
+
+```bash
+ros2 run teleop_twist_keyboard teleop_twist_keyboard
+```
+
+### Moving the Arm
+To move the arm to a specific pose (e.g., shoulder up):
+
+```bash
+ros2 topic pub --once /joint_commands sensor_msgs/msg/JointState "{name: ['shoulder_joint'], position: [-0.5]}"
+```

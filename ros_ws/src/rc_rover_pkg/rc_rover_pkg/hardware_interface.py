@@ -6,6 +6,9 @@ import serial
 import time
 import math
 
+def constrain(val, min_val, max_val):
+    return min(max_val, max(min_val, val))
+
 class HardwareInterface(Node):
     def __init__(self):
         super().__init__('hardware_interface')
@@ -40,6 +43,8 @@ class HardwareInterface(Node):
             'rear_left_wheel_joint', 'rear_right_wheel_joint'
         ]
         self.current_positions = {name: 0.0 for name in self.joint_names}
+        self.left_motor_cmd = 0.0
+        self.right_motor_cmd = 0.0
         
         # Timer for publishing state (loop)
         self.create_timer(0.1, self.timer_callback) # 10Hz
@@ -56,11 +61,33 @@ class HardwareInterface(Node):
             self.ser = None
 
     def cmd_vel_callback(self, msg):
-        # Base control logic here
-        # For now, just log or simple mapping
-        # self.get_logger().info(f"Received cmd_vel: linear.x={msg.linear.x}, angular.z={msg.angular.z}")
-        # TODO: Implement base motor commands if protocol supports it
-        pass
+        # Differential Drive Logic
+        # Wheel separation and radius should be parameters, but hardcoding for now
+        # based on URDF (approximate)
+        wheel_sep = 0.18 # Distance between left and right wheels
+        wheel_radius = 0.04
+        
+        linear = msg.linear.x
+        angular = msg.angular.z
+        
+        # Calculate wheel velocities (m/s)
+        left_vel = linear - (angular * wheel_sep / 2)
+        right_vel = linear + (angular * wheel_sep / 2)
+        
+        # Convert to percentage (-100 to 100) for Arduino PWM mapping
+        # Assuming max speed is roughly 0.5 m/s
+        max_speed = 0.5
+        
+        self.left_motor_cmd = constrain(left_vel / max_speed * 100, -100, 100)
+        self.right_motor_cmd = constrain(right_vel / max_speed * 100, -100, 100)
+        
+        # Update wheel joint states for visualization (approximate integration)
+        # In a real system, we would read encoders. Here we just integrate command.
+        dt = 0.1 # Timer period
+        self.current_positions['front_left_wheel_joint'] += (left_vel / wheel_radius) * dt
+        self.current_positions['rear_left_wheel_joint'] += (left_vel / wheel_radius) * dt
+        self.current_positions['front_right_wheel_joint'] += (right_vel / wheel_radius) * dt
+        self.current_positions['rear_right_wheel_joint'] += (right_vel / wheel_radius) * dt
 
     def joint_command_callback(self, msg):
         # Update internal state with commanded positions
@@ -94,8 +121,16 @@ class HardwareInterface(Node):
         grip_deg = 90.0 + (grip_val / 0.02) * 20.0 # Assuming 20 deg range
         angles.append(grip_deg)
         
-        # Format: CMD:ang0,ang1,ang2,ang3,ang4,ang5\n
-        cmd_str = "CMD:" + ",".join([f"{a:.2f}" for a in angles]) + "\n"
+        # Motors
+        motors = [
+            self.left_motor_cmd,  # M1 (FL)
+            self.right_motor_cmd, # M2 (FR)
+            self.left_motor_cmd,  # M3 (RL)
+            self.right_motor_cmd  # M4 (RR)
+        ]
+        
+        # Format: CMD:s1,s2,s3,s4,s5,s6,m1,m2,m3,m4\n
+        cmd_str = "CMD:" + ",".join([f"{a:.2f}" for a in angles]) + "," + ",".join([f"{m:.0f}" for m in motors]) + "\n"
         
         if self.ser and self.ser.is_open:
             try:
@@ -103,8 +138,8 @@ class HardwareInterface(Node):
             except Exception as e:
                 self.get_logger().error(f"Serial write error: {e}")
         else:
-            # Mock
-            # self.get_logger().info(f"MOCK SEND: {cmd_str.strip()}")
+            # Mock Mode
+            # self.get_logger().info(f"MOCK CMD: {cmd_str.strip()}")
             pass
 
     def timer_callback(self):
@@ -130,7 +165,8 @@ def main(args=None):
         if node.ser:
             node.ser.close()
         node.destroy_node()
-        rclpy.shutdown()
+        if rclpy.ok():
+            rclpy.shutdown()
 
 if __name__ == '__main__':
     main()
