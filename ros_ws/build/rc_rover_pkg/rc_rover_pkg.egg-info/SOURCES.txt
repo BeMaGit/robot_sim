@@ -12,4 +12,5 @@ rc_rover_pkg.egg-info/requires.txt
 rc_rover_pkg.egg-info/top_level.txt
 rc_rover_pkg.egg-info/zip-safe
 resource/rc_rover_pkg
+rviz/default.rviz
 urdf/robot_model.urdf

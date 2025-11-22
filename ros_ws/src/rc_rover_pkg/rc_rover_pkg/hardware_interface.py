@@ -35,7 +35,9 @@ class HardwareInterface(Node):
         # State
         self.joint_names = [
             'waist_joint', 'shoulder_joint', 'elbow_joint', 
-            'wrist_pitch_joint', 'wrist_roll_joint', 'gripper_joint'
+            'wrist_pitch_joint', 'wrist_roll_joint', 'gripper_joint',
+            'front_left_wheel_joint', 'front_right_wheel_joint',
+            'rear_left_wheel_joint', 'rear_right_wheel_joint'
         ]
         self.current_positions = {name: 0.0 for name in self.joint_names}
         

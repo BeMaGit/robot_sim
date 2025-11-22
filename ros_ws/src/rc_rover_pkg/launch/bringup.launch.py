@@ -10,6 +10,7 @@ def generate_launch_description():
     pkg_share = get_package_share_directory(pkg_name)
     
     urdf_file = os.path.join(pkg_share, 'urdf', 'robot_model.urdf')
+    rviz_config_file = os.path.join(pkg_share, 'rviz', 'default.rviz')
     
     # Read URDF content
     with open(urdf_file, 'r') as infp:
@@ -39,5 +40,13 @@ def generate_launch_description():
             parameters=[{
                 'serial_port': LaunchConfiguration('serial_port')
             }]
+        ),
+
+        Node(
+            package='rviz2',
+            executable='rviz2',
+            name='rviz2',
+            output='screen',
+            arguments=['-d', rviz_config_file]
         ),
     ])

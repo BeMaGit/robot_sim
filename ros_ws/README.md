@@ -42,25 +42,9 @@ ros2 launch rc_rover_pkg bringup.launch.py serial_port:=/dev/ttyUSB0
 
 ## Visualization (Rviz)
 
-The launch file does not start Rviz automatically. To visualize the robot model:
+The launch file starts Rviz automatically with a pre-configured view.
 
-1.  Open a new terminal.
-2.  Source the workspace:
-    ```bash
-    cd ~/Documents/robot_sim/ros_ws
-    source install/setup.bash
-    ```
-3.  Run Rviz 2:
-    ```bash
-    rviz2
-    ```
-
-### Configuring Rviz
-
-1.  In the **Displays** panel (left side), click **Add**.
-2.  Select **RobotModel** and click **OK**.
-3.  Set the **Fixed Frame** (in Global Options) to `base_link` (or the root link of your URDF).
-4.  You should now see the 3D model of the rover.
+To visualize the robot model, simply run the launch command mentioned above. RViz will open and display the robot model.
 
 ## Interaction
 
