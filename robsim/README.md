@@ -36,7 +36,7 @@ The hardware is based on the [RC Rover with Robot Arm 6DOF](https://makerworld.c
     venv/bin/pip install -r requirements.txt
     ```
 
-![Robot Simulation](img/robot_sim_v00.png)
+![Robot Simulation](../img/robot_sim_v00.png)
 
 ## Usage
 

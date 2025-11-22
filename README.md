@@ -32,3 +32,9 @@ Both implementations target the same hardware platform:
 -   **Chassis**: 4WD RC Rover (Skid Steer).
 -   **Arm**: 6-DOF Robot Arm + Gripper.
 -   **Electronics**: Raspberry Pi (High-level control) + Arduino (Low-level servo driver).
+
+### Hardware Diagram
+
+The hardware is based on the [RC Rover with Robot Arm 6DOF](https://makerworld.com/en/models/1342319-rc-rover-with-robot-arm-6-dof#profileId-1383072) from [MakerWorld](https://makerworld.com/) by [Emre Kalem](https://makerworld.com/en/@emrekalem).
+
+![Hardware Diagram](img/hardware_v00.png)
