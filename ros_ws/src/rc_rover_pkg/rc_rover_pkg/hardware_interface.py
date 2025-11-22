@@ -1,7 +1,8 @@
 import rclpy
 from rclpy.node import Node
 from sensor_msgs.msg import JointState
-from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Twist, TransformStamped
+from tf2_ros import TransformBroadcaster
 import serial
 import time
 import math
@@ -26,13 +27,10 @@ class HardwareInterface(Node):
         
         # Publishers
         self.joint_pub = self.create_publisher(JointState, 'joint_states', 10)
+        self.tf_broadcaster = TransformBroadcaster(self)
         
         # Subscribers
         self.create_subscription(Twist, 'cmd_vel', self.cmd_vel_callback, 10)
-        # We can subscribe to a specific topic for arm commands, or just use joint_states if we had a controller.
-        # For this simple interface, let's listen to 'joint_commands' (custom or standard)
-        # But typically, we might want to be compatible with MoveIt or similar, which output JointTrajectory.
-        # For simplicity, let's listen to 'joint_commands' as a JointState message for direct control.
         self.create_subscription(JointState, 'joint_commands', self.joint_command_callback, 10)
         
         # State
@@ -45,6 +43,13 @@ class HardwareInterface(Node):
         self.current_positions = {name: 0.0 for name in self.joint_names}
         self.left_motor_cmd = 0.0
         self.right_motor_cmd = 0.0
+        
+        # Odometry State
+        self.x = 0.0
+        self.y = 0.0
+        self.theta = 0.0
+        self.linear_vel = 0.0
+        self.angular_vel = 0.0
         
         # Timer for publishing state (loop)
         self.create_timer(0.1, self.timer_callback) # 10Hz
@@ -67,12 +72,12 @@ class HardwareInterface(Node):
         wheel_sep = 0.18 # Distance between left and right wheels
         wheel_radius = 0.04
         
-        linear = msg.linear.x
-        angular = msg.angular.z
+        self.linear_vel = msg.linear.x
+        self.angular_vel = msg.angular.z
         
         # Calculate wheel velocities (m/s)
-        left_vel = linear - (angular * wheel_sep / 2)
-        right_vel = linear + (angular * wheel_sep / 2)
+        left_vel = self.linear_vel - (self.angular_vel * wheel_sep / 2)
+        right_vel = self.linear_vel + (self.angular_vel * wheel_sep / 2)
         
         # Convert to percentage (-100 to 100) for Arduino PWM mapping
         # Assuming max speed is roughly 0.5 m/s
@@ -80,14 +85,6 @@ class HardwareInterface(Node):
         
         self.left_motor_cmd = constrain(left_vel / max_speed * 100, -100, 100)
         self.right_motor_cmd = constrain(right_vel / max_speed * 100, -100, 100)
-        
-        # Update wheel joint states for visualization (approximate integration)
-        # In a real system, we would read encoders. Here we just integrate command.
-        dt = 0.1 # Timer period
-        self.current_positions['front_left_wheel_joint'] += (left_vel / wheel_radius) * dt
-        self.current_positions['rear_left_wheel_joint'] += (left_vel / wheel_radius) * dt
-        self.current_positions['front_right_wheel_joint'] += (right_vel / wheel_radius) * dt
-        self.current_positions['rear_right_wheel_joint'] += (right_vel / wheel_radius) * dt
 
     def joint_command_callback(self, msg):
         # Update internal state with commanded positions
@@ -143,16 +140,61 @@ class HardwareInterface(Node):
             pass
 
     def timer_callback(self):
-        # Publish current state (Feedback)
-        # In a real system, we might read back from Arduino. 
-        # Here we just echo the commands (Open Loop).
+        # 1. Integrate Odometry
+        dt = 0.1
         
+        delta_x = (self.linear_vel * math.cos(self.theta)) * dt
+        delta_y = (self.linear_vel * math.sin(self.theta)) * dt
+        delta_theta = self.angular_vel * dt
+        
+        self.x += delta_x
+        self.y += delta_y
+        self.theta += delta_theta
+        
+        # 2. Integrate Wheel Joints (for visualization)
+        wheel_sep = 0.18
+        wheel_radius = 0.04
+        left_vel = self.linear_vel - (self.angular_vel * wheel_sep / 2)
+        right_vel = self.linear_vel + (self.angular_vel * wheel_sep / 2)
+        
+        self.current_positions['front_left_wheel_joint'] += (left_vel / wheel_radius) * dt
+        self.current_positions['rear_left_wheel_joint'] += (left_vel / wheel_radius) * dt
+        self.current_positions['front_right_wheel_joint'] += (right_vel / wheel_radius) * dt
+        self.current_positions['rear_right_wheel_joint'] += (right_vel / wheel_radius) * dt
+        
+        # 3. Publish TF (odom -> base_link)
+        t = TransformStamped()
+        t.header.stamp = self.get_clock().now().to_msg()
+        t.header.frame_id = 'odom'
+        t.child_frame_id = 'base_link'
+        
+        t.transform.translation.x = self.x
+        t.transform.translation.y = self.y
+        t.transform.translation.z = 0.0
+        
+        # Yaw to Quaternion
+        q = self.euler_to_quaternion(0, 0, self.theta)
+        t.transform.rotation.x = q[0]
+        t.transform.rotation.y = q[1]
+        t.transform.rotation.z = q[2]
+        t.transform.rotation.w = q[3]
+        
+        self.tf_broadcaster.sendTransform(t)
+        
+        # 4. Publish Joint States
         msg = JointState()
         msg.header.stamp = self.get_clock().now().to_msg()
         msg.name = list(self.current_positions.keys())
         msg.position = list(self.current_positions.values())
         
         self.joint_pub.publish(msg)
+
+    def euler_to_quaternion(self, roll, pitch, yaw):
+        qx = math.sin(roll/2) * math.cos(pitch/2) * math.cos(yaw/2) - math.cos(roll/2) * math.sin(pitch/2) * math.sin(yaw/2)
+        qy = math.cos(roll/2) * math.sin(pitch/2) * math.cos(yaw/2) + math.sin(roll/2) * math.cos(pitch/2) * math.sin(yaw/2)
+        qz = math.cos(roll/2) * math.cos(pitch/2) * math.sin(yaw/2) - math.sin(roll/2) * math.sin(pitch/2) * math.cos(yaw/2)
+        qw = math.cos(roll/2) * math.cos(pitch/2) * math.cos(yaw/2) + math.sin(roll/2) * math.sin(pitch/2) * math.sin(yaw/2)
+        return [qx, qy, qz, qw]
 
 def main(args=None):
     rclpy.init(args=args)
