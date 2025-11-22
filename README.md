@@ -21,7 +21,7 @@ A full ROS 2 (Robot Operating System) implementation. This is the recommended ap
 ### 2. Python Simulation (`robsim/`)
 A standalone Python simulation using PyBullet. This is useful for testing kinematics, physics, and control logic without the overhead of ROS.
 
-![Robot Simulation](../img/robot_sim_v00.png)
+![Robot Simulation](img/robot_sim_v00.png)
 
 -   **Features**:
     -   PyBullet physics engine.
