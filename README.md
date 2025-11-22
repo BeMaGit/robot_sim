@@ -4,6 +4,8 @@ A PyBullet-based simulation of an RC Rover equipped with a 6-DOF robot arm. This
 
 The hardware is based on the [RC Rover with Robot Arm 6DOF](https://makerworld.com/en/models/1342319-rc-rover-with-robot-arm-6-dof#profileId-1383072) from [MakerWorld](https://makerworld.com/) by [Emre Kalem](https://makerworld.com/en/@emrekalem).
 
+* [Documentation](https://www.youtube.com/watch?v=IE_Y0Bq97aE&t=24s)
+
 ** ATTENTION - THE CODE IS NOT TESTED ON HARDWARE YET! **
 
 ## Features

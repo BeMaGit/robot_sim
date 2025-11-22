@@ -1,0 +1,43 @@
+import os
+from ament_index_python.packages import get_package_share_directory
+from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    pkg_name = 'rc_rover_pkg'
+    pkg_share = get_package_share_directory(pkg_name)
+    
+    urdf_file = os.path.join(pkg_share, 'urdf', 'robot_model.urdf')
+    
+    # Read URDF content
+    with open(urdf_file, 'r') as infp:
+        robot_desc = infp.read()
+    
+    return LaunchDescription([
+        DeclareLaunchArgument(
+            'serial_port',
+            default_value='/dev/ttyUSB0',
+            description='Serial port for Arduino'
+        ),
+        
+        Node(
+            package='robot_state_publisher',
+            executable='robot_state_publisher',
+            name='robot_state_publisher',
+            output='screen',
+            parameters=[{'robot_description': robot_desc}],
+            arguments=[urdf_file]
+        ),
+        
+        Node(
+            package=pkg_name,
+            executable='hardware_interface',
+            name='hardware_interface',
+            output='screen',
+            parameters=[{
+                'serial_port': LaunchConfiguration('serial_port')
+            }]
+        ),
+    ])
