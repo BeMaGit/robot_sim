@@ -4,6 +4,7 @@ setup.py
 launch/bringup.launch.py
 rc_rover_pkg/__init__.py
 rc_rover_pkg/hardware_interface.py
+rc_rover_pkg/keyboard_control.py
 rc_rover_pkg.egg-info/PKG-INFO
 rc_rover_pkg.egg-info/SOURCES.txt
 rc_rover_pkg.egg-info/dependency_links.txt

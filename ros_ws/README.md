@@ -83,6 +83,23 @@ To drive the robot using your keyboard:
 ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ```
 
+### Keyboard Control (Full Robot)
+To control both the base and the arm using the keyboard (similar to the simulation):
+
+```bash
+ros2 run rc_rover_pkg keyboard_control
+```
+
+**Controls:**
+-   **Drive**: Arrow Keys
+-   **Waist**: J (Left) / L (Right)
+-   **Extension (IK)**: I (Out) / K (In)
+-   **Height (IK)**: P (Up) / ; (Down)
+-   **Wrist Pitch (IK)**: Z (Up) / H (Down)
+-   **Wrist Roll**: U / O
+-   **Gripper**: M (Open/Close) / , (Reverse)
+-   **Locked Mode**: . (Toggle)
+
 ### Mock Mode Examples
 
 Since you are likely running in Mock Mode (no hardware), here are some specific examples to try:

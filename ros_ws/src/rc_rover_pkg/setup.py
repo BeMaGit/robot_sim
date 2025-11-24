@@ -26,6 +26,7 @@ setup(
     entry_points={
         'console_scripts': [
             'hardware_interface = rc_rover_pkg.hardware_interface:main',
+            'keyboard_control = rc_rover_pkg.keyboard_control:main',
         ],
     },
 )
